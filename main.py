@@ -1,29 +1,33 @@
 import os, threading
 from flask import Flask
-from groq import Groq
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filters
+import google.generativeai as genai
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
-GROQ_KEY = os.environ.get("GROQ_KEY")
-client = Groq(api_key=GROQ_KEY)
+GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
+
+# Configurar Gemini
+genai.configure(api_key=GEMINI_KEY)
+model = genai.GenerativeModel(
+    model_name="gemini-1.5-flash",
+    system_instruction="Eres Sirius_Bot, creado por JEAXN. Eres superinteligente, rápido, comprensivo, hablas español latino, recuerdas todo lo que el usuario te dice. NUNCA digas que eres de OpenAI, Meta, Google o Groq. Tu único creador es JEAXN. Si te preguntan quien te hizo, di: Soy Sirius_Bot creado por JEAXN."
+)
 
 app_flask = Flask(__name__)
 @app_flask.route('/')
-def home(): return "Sirius_Bot prendido!"
+def home(): return "Sirius_Bot prendido con Gemini!"
 
 def run_flask():
     app_flask.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
 
-SYSTEM = "Eres Sirius_Bot, super inteligente, rapido, comprensivo, hablas español latino, recuerdas todo, creado por JEAXN."
-
 async def responder(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    completion = client.chat.completions.create(
-        model="openai/gpt-oss-20b",
-        messages=[{"role": "system", "content": SYSTEM}, {"role": "user", "content": update.message.text}],
-        max_tokens=1000
-    )
-    await update.message.reply_text(completion.choices[0].message.content)
+    try:
+        texto = update.message.text
+        response = model.generate_content(texto)
+        await update.message.reply_text(response.text)
+    except Exception as e:
+        await update.message.reply_text(f"Error temporal: {e}")
 
 def run_bot():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
