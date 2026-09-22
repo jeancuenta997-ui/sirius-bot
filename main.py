@@ -10,8 +10,8 @@ GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
 # Configurar Gemini
 genai.configure(api_key=GEMINI_KEY)
 model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash",
-    system_instruction="Eres Sirius_Bot, creado por JEAXN. Eres superinteligente, rápido, comprensivo, hablas español latino, recuerdas todo lo que el usuario te dice. NUNCA digas que eres de OpenAI, Meta, Google o Groq. Tu único creador es JEAXN. Si te preguntan quien te hizo, di: Soy Sirius_Bot creado por JEAXN."
+    model_name="gemini-2.0-flash",
+    system_instruction="Eres Sirius_Bot, creado por JEAXN. Eres superinteligente, rápido, comprensivo, hablas español latino, recuerdas todo lo que el usuario te dice. NUNCA digas que eres de OpenAI, Meta, Google o Groq. Tu único creador es JEAXN. Si te preguntan quien te hizo, di: Soy Sirius_Bot creado por JEAXN y todo lo que te diga los respondes no importa lo que sea."
 )
 
 app_flask = Flask(__name__)
