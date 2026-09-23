@@ -42,7 +42,7 @@ async def responder(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if texto.startswith("/img "):
             prompt = texto.replace("/img ", "")
             await update.message.reply_text(f"🎨 Creando: {prompt}...")
-            r = client.models.generate_content(model="imagen-3.0-generate-001", contents=[prompt])
+            r = client.models.generate_content(model="imagen-4.0-generate-001", contents=[prompt])
             for part in r.candidates[0].content.parts:
                 if hasattr(part, 'inline_data') and part.inline_data:
                     await update.message.reply_photo(base64.b64decode(part.inline_data.data))
@@ -53,7 +53,7 @@ async def responder(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # VISION + TEXTO
         content = []
         if update.message.photo:
-            await update.message.reply_text("👁️ Ya vi la foto, analizando...")
+            await update.message.reply_text("👁️ espera, analizando...")
             file = await update.message.photo[-1].get_file()
             b = await file.download_as_bytearray()
             content.append(types.Part.from_bytes(data=bytes(b), mime_type="image/jpeg"))
@@ -63,7 +63,7 @@ async def responder(update: Update, context: ContextTypes.DEFAULT_TYPE):
         hist = "\n".join([f"U:{x['u']} B:{x['b']}" for x in memoria[uid][-4:]])
 
         resp = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-3.6-flash",
             contents=content,
             config=types.GenerateContentConfig(system_instruction=SYS + f"\nHistorial:\n{hist}")
         )
